@@ -7,22 +7,23 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Entity
-@Table(name = "recetas")
+@Table(name = "detalle_compra")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Receta {
+public class DetalleCompra {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "producto_id", nullable = false)
-    private Producto producto;
+    @JoinColumn(name = "compra_id", nullable = false)
+    private Compra compra;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ingrediente_id", nullable = false)
@@ -31,4 +32,8 @@ public class Receta {
     @Column(nullable = false)
     private BigDecimal cantidad;
 
+    @Column(nullable = false)
+    private BigDecimal precioUnitario;
+
+    private LocalDate fechaVencimiento;
 }

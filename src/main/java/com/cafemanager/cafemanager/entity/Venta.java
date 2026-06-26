@@ -1,5 +1,6 @@
 package com.cafemanager.cafemanager.entity;
 
+import com.cafemanager.cafemanager.enums.EstadoVenta;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,45 +8,37 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "productos")
+@Table(name = "ventas")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Producto {
+public class Venta {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     @Column(nullable = false)
-    private String nombre;
+    private LocalDateTime fecha;
 
-    @Column(length = 500)
-    private String descripcion;
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal total;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private BigDecimal precio;
-
-
-    @Column(nullable = false)
-    private Boolean activo = true;
-
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "categoria_id", nullable = false)
-    private Categoria categoria;
+    private EstadoVenta estado;
 
     @OneToMany(
-            mappedBy = "producto",
+            mappedBy = "venta",
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private List<Receta> receta = new ArrayList<>();
+    private List<DetalleVenta> detalles = new ArrayList<>();
 
 }

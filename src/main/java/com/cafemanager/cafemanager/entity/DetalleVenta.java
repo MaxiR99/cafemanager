@@ -9,26 +9,32 @@ import lombok.Setter;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "recetas")
+@Table(name = "detalle_venta")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Receta {
+public class DetalleVenta {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "venta_id", nullable = false)
+    private Venta venta;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "producto_id", nullable = false)
     private Producto producto;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ingrediente_id", nullable = false)
-    private Ingrediente ingrediente;
-
     @Column(nullable = false)
-    private BigDecimal cantidad;
+    private Integer cantidad;
+
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal precioUnitario;
+
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal subtotal;
 
 }
