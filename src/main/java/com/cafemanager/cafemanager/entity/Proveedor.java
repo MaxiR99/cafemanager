@@ -1,5 +1,6 @@
 package com.cafemanager.cafemanager.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,6 +35,7 @@ public class Proveedor {
     @Column(nullable = false)
     private Boolean activo = true;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "proveedor")
     private List<Compra> compras = new ArrayList<>();
 }

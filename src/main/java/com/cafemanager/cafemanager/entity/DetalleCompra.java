@@ -1,5 +1,6 @@
 package com.cafemanager.cafemanager.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,6 +24,7 @@ public class DetalleCompra {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "compra_id", nullable = false)
+    @JsonBackReference
     private Compra compra;
 
     @ManyToOne(fetch = FetchType.LAZY)
