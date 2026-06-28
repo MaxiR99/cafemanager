@@ -4,5 +4,6 @@ public enum EstadoVenta {
     PENDIENTE,
     EN_PREPARACION,
     ENTREGADA,
-    CANCELADA
+    CANCELADA,
+    COMPLETADA
 }

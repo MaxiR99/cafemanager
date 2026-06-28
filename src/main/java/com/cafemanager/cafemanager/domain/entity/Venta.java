@@ -34,6 +34,9 @@ public class Venta {
     @Column(nullable = false)
     private EstadoVenta estado;
 
+    //@Column(nullable = false)
+    //private Boolean activa = true;
+
     @OneToMany(
             mappedBy = "venta",
             cascade = CascadeType.ALL,

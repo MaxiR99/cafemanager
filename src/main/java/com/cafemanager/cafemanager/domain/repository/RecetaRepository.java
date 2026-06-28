@@ -9,4 +9,6 @@ public interface RecetaRepository extends JpaRepository<Receta, Long> {
 
     Optional<Receta> findByProductoId(Long productoId);
 
+    Optional<Receta> findByProductoIdAndActivaTrue(Long productoId);
+
 }
