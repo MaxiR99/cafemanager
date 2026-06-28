@@ -1,5 +1,6 @@
 package com.cafemanager.cafemanager.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,6 +28,7 @@ public class Categoria {
     @Column(nullable = false)
     private Boolean activo = true;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "categoria")
     private List<Producto> productos = new ArrayList<>();
 

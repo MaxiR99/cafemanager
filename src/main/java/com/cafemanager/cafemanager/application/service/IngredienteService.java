@@ -3,6 +3,7 @@ package com.cafemanager.cafemanager.application.service;
 import com.cafemanager.cafemanager.api.request.IngredienteRequestDTO;
 import com.cafemanager.cafemanager.domain.entity.Ingrediente;
 import com.cafemanager.cafemanager.domain.repository.IngredienteRepository;
+import com.cafemanager.cafemanager.exception.RecursoNoEncontradoException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,7 +39,8 @@ public class IngredienteService {
 
     public Ingrediente buscarPorId(Long id) {
         return ingredienteRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Ingrediente no encontrado"));
+                .orElseThrow(() ->
+                        new RecursoNoEncontradoException("Ingrediente no encontrado"));
     }
 
 

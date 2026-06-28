@@ -1,5 +1,6 @@
 package com.cafemanager.cafemanager.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -36,16 +37,21 @@ public class Producto {
     @Column(nullable = false)
     private Boolean activo = true;
 
+    @Column(nullable = false)
+    private Boolean disponible = true;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "categoria_id", nullable = false)
     private Categoria categoria;
 
-    @OneToMany(
+    @JsonIgnore
+    @OneToOne(
             mappedBy = "producto",
             cascade = CascadeType.ALL,
-            orphanRemoval = true
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
     )
-    private List<Receta> receta = new ArrayList<>();
+    private Receta receta;
 
 }

@@ -2,6 +2,7 @@ package com.cafemanager.cafemanager.application.service;
 
 import com.cafemanager.cafemanager.domain.entity.Proveedor;
 import com.cafemanager.cafemanager.domain.repository.ProveedorRepository;
+import com.cafemanager.cafemanager.exception.RecursoNoEncontradoException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,7 +31,8 @@ public class ProveedorService {
 
     public Proveedor buscarPorId(Long id) {
         return proveedorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Proveedor no encontrado"));
+                .orElseThrow(() ->
+                        new RecursoNoEncontradoException("Proveedor no encontrado"));
     }
 
 }

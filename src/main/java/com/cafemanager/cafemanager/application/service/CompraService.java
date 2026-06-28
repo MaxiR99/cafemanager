@@ -11,6 +11,7 @@ import com.cafemanager.cafemanager.api.request.CompraRequestDTO;
 import com.cafemanager.cafemanager.api.response.CompraResumenResponseDTO;
 import com.cafemanager.cafemanager.api.request.DetalleCompraRequestDTO;
 import com.cafemanager.cafemanager.domain.enums.TipoMovimientoStock;
+import com.cafemanager.cafemanager.exception.RecursoNoEncontradoException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -53,7 +54,8 @@ public class CompraService {
     public CompraDetalleResponseDTO buscarDetalle(Long id){
 
         Compra compra = compraRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Compra no encontrada"));
+                .orElseThrow(() ->
+                        new RecursoNoEncontradoException("Compra no encontrada"));
 
         return CompraMapper.toDetalleDTO(compra);
 
@@ -65,7 +67,7 @@ public class CompraService {
 
 
         Proveedor proveedor = proveedorRepository.findById(dto.getProveedorId())
-                .orElseThrow(() -> new RuntimeException("Proveedor no encontrado"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Proveedor no encontrado"));
 
 
         Compra compra = new Compra();
@@ -80,7 +82,7 @@ public class CompraService {
 
             Ingrediente ingrediente = ingredienteRepository.findById(
                     detalleDTO.getIngredienteId()
-            ).orElseThrow(() -> new RuntimeException("Ingrediente no encontrado"));
+            ).orElseThrow(() -> new RecursoNoEncontradoException("Ingrediente no encontrado"));
 
 
             // Actualizamos stock

@@ -1,5 +1,6 @@
 package com.cafemanager.cafemanager.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "recetas")
@@ -20,15 +23,19 @@ public class Receta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "producto_id", nullable = false)
     private Producto producto;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ingrediente_id", nullable = false)
-    private Ingrediente ingrediente;
-
     @Column(nullable = false)
-    private BigDecimal cantidad;
+    private Boolean activa = true;
 
+    @JsonIgnore
+    @OneToMany(
+            mappedBy = "receta",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+
+    private List<DetalleReceta> detalles = new ArrayList<>();
 }
