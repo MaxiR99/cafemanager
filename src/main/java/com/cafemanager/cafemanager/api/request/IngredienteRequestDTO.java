@@ -4,6 +4,7 @@ import com.cafemanager.cafemanager.domain.enums.UnidadMedida;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,6 +16,7 @@ public class IngredienteRequestDTO {
 
 
     @NotBlank(message = "El nombre es obligatorio")
+    @Size(max = 100)
     private String nombre;
 
 

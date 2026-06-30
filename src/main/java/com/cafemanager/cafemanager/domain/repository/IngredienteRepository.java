@@ -14,7 +14,7 @@ public interface IngredienteRepository extends JpaRepository<Ingrediente, Long> 
 
     List<Ingrediente> findByActivoTrue();
 
-    boolean existsByNombreIgnoreCase(String nombre);
+    boolean existsByNombreIgnoreCaseAndActivoTrue(String nombre);
 
     List<Ingrediente> findByStockActualLessThanEqual(BigDecimal stock);
 

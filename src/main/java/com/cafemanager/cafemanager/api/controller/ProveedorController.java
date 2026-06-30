@@ -4,6 +4,8 @@ import com.cafemanager.cafemanager.api.request.ProveedorRequestDTO;
 import com.cafemanager.cafemanager.api.response.ProveedorResponseDTO;
 import com.cafemanager.cafemanager.application.service.ProveedorService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,9 +20,15 @@ public class ProveedorController {
         this.proveedorService = proveedorService;
     }
 
+
+
     @PostMapping
-    public ProveedorResponseDTO crear(@Valid @RequestBody ProveedorRequestDTO dto) {
-        return proveedorService.guardar(dto);
+    public ResponseEntity<ProveedorResponseDTO> crear(
+            @Valid @RequestBody ProveedorRequestDTO dto){
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(proveedorService.guardar(dto));
     }
 
     @GetMapping
@@ -31,6 +39,14 @@ public class ProveedorController {
     @GetMapping("/{id}")
     public ProveedorResponseDTO buscar(@PathVariable Long id) {
         return proveedorService.buscarPorId(id);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void eliminar(@PathVariable Long id){
+
+        proveedorService.eliminar(id);
+
     }
 
 }

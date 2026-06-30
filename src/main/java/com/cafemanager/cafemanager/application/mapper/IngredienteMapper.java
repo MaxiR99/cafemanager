@@ -19,7 +19,7 @@ public class IngredienteMapper {
         ingrediente.setStockMinimo(dto.getStockMinimo());
         ingrediente.setCostoCompra(dto.getCostoCompra());
         ingrediente.setUnidadMedida(dto.getUnidadMedida());
-        ingrediente.setActivo(true);
+
 
         return ingrediente;
     }

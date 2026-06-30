@@ -4,6 +4,8 @@ import com.cafemanager.cafemanager.api.request.CategoriaRequestDTO;
 import com.cafemanager.cafemanager.api.response.CategoriaResponseDTO;
 import com.cafemanager.cafemanager.application.service.CategoriaService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,11 +21,12 @@ public class CategoriaController {
     }
 
     @PostMapping
-    public CategoriaResponseDTO crear(
+    public ResponseEntity<CategoriaResponseDTO> crear(
             @Valid @RequestBody CategoriaRequestDTO dto){
 
-        return categoriaService.guardar(dto);
-
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(categoriaService.guardar(dto));
     }
 
     @GetMapping

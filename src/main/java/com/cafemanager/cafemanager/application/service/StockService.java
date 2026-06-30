@@ -1,6 +1,7 @@
 package com.cafemanager.cafemanager.application.service;
 
 import com.cafemanager.cafemanager.api.request.MovimientoStockRequestDTO;
+import com.cafemanager.cafemanager.api.response.MovimientoStockResponseDTO;
 import com.cafemanager.cafemanager.domain.entity.DetalleReceta;
 import com.cafemanager.cafemanager.domain.entity.Ingrediente;
 import com.cafemanager.cafemanager.domain.entity.Producto;
@@ -9,6 +10,7 @@ import com.cafemanager.cafemanager.domain.enums.TipoMovimientoStock;
 import com.cafemanager.cafemanager.domain.repository.IngredienteRepository;
 import com.cafemanager.cafemanager.domain.repository.RecetaRepository;
 import com.cafemanager.cafemanager.exception.RecursoNoEncontradoException;
+import com.cafemanager.cafemanager.exception.ReglaNegocioException;
 import com.cafemanager.cafemanager.exception.StockInsuficienteException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -41,7 +43,7 @@ public class StockService {
 
 
         Receta receta = recetaRepository
-                .findByProductoId(producto.getId())
+                .findByProductoIdAndActivaTrue(producto.getId())
                 .orElseThrow(() ->
                         new RecursoNoEncontradoException(
                                 "El producto no tiene receta asociada"
@@ -49,11 +51,7 @@ public class StockService {
                 );
 
 
-        if (!receta.getActiva()) {
-            throw new IllegalStateException(
-                    "La receta del producto está inactiva"
-            );
-        }
+
 
 
         for (DetalleReceta detalle : receta.getDetalles()) {
@@ -92,10 +90,40 @@ public class StockService {
         }
     }
 
+    @Transactional
+    public void descontarStock(
+            Ingrediente ingrediente,
+            BigDecimal cantidad,
+            TipoMovimientoStock tipoMovimiento,
+            String observacion,
+            String referencia
+    ){
+
+        validarStock(ingrediente, cantidad);
+
+
+        ingrediente.setStockActual(
+                ingrediente.getStockActual()
+                        .subtract(cantidad)
+        );
+
+
+        ingredienteRepository.save(ingrediente);
+
+
+        movimientoStockService.registrarMovimiento(
+                ingrediente,
+                tipoMovimiento,
+                cantidad,
+                observacion,
+                referencia
+        );
+    }
+
 
 
     @Transactional
-    public void registrarAjuste(MovimientoStockRequestDTO dto) {
+    public MovimientoStockResponseDTO registrarAjuste(MovimientoStockRequestDTO dto) {
 
         Ingrediente ingrediente = ingredienteRepository.findById(dto.getIngredienteId())
                 .orElseThrow(() ->
@@ -121,7 +149,7 @@ public class StockService {
                 );
             }
 
-            default -> throw new IllegalArgumentException(
+            default -> throw new ReglaNegocioException(
                     "Tipo de movimiento no permitido"
             );
         }
@@ -131,17 +159,13 @@ public class StockService {
         ingredienteRepository.save(ingrediente);
 
 
-
-        movimientoStockService.registrarMovimiento(
+        return movimientoStockService.registrarMovimiento(
                 ingrediente,
                 dto.getTipoMovimiento(),
                 dto.getCantidad(),
                 dto.getObservacion(),
                 "AJUSTE"
         );
-
-
-
     }
 
 

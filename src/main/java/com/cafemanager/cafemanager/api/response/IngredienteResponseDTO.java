@@ -16,6 +16,6 @@ public class IngredienteResponseDTO {
     private BigDecimal stockMinimo;
     private BigDecimal costoCompra;
     private UnidadMedida unidadMedida;
-    private boolean activo;
+    private Boolean activo;
 
 }

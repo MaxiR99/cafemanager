@@ -53,15 +53,15 @@ public class VentaService {
                     producto,
                     detalleDTO.getCantidad());
 
+            BigDecimal subtotal = producto.getPrecio()
+                    .multiply(BigDecimal.valueOf(detalleDTO.getCantidad()));
+
             DetalleVenta detalle = new DetalleVenta();
+
             detalle.setVenta(venta);
             detalle.setProducto(producto);
             detalle.setCantidad(detalleDTO.getCantidad());
             detalle.setPrecioUnitario(producto.getPrecio());
-
-            BigDecimal subtotal = producto.getPrecio()
-                    .multiply(BigDecimal.valueOf(detalleDTO.getCantidad()));
-
             detalle.setSubtotal(subtotal);
 
             venta.getDetalles().add(detalle);

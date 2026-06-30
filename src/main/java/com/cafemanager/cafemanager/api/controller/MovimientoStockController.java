@@ -2,11 +2,11 @@ package com.cafemanager.cafemanager.api.controller;
 
 import com.cafemanager.cafemanager.api.request.MovimientoStockRequestDTO;
 import com.cafemanager.cafemanager.api.response.MovimientoStockResponseDTO;
-import com.cafemanager.cafemanager.application.mapper.MovimientoStockMapper;
+import com.cafemanager.cafemanager.application.service.MovimientoStockService;
 import com.cafemanager.cafemanager.application.service.StockService;
-import com.cafemanager.cafemanager.domain.entity.MovimientoStock;
-import com.cafemanager.cafemanager.domain.repository.MovimientoStockRepository;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,36 +15,29 @@ import java.util.List;
 @RequestMapping("/movimientos-stock")
 public class MovimientoStockController {
 
-
-    private final MovimientoStockRepository movimientoStockRepository;
     private final StockService stockService;
-
+    private final MovimientoStockService movimientoStockService;
 
     public MovimientoStockController(
-            MovimientoStockRepository movimientoStockRepository,
-            StockService stockService
-    ) {
-        this.movimientoStockRepository = movimientoStockRepository;
-        this.stockService = stockService;
-    }
+            StockService stockService,
+            MovimientoStockService movimientoStockService) {
 
+        this.stockService = stockService;
+        this.movimientoStockService = movimientoStockService;
+    }
 
     @GetMapping
-    public List<MovimientoStockResponseDTO> listarMovimientos() {
-
-        return movimientoStockRepository.findAll()
-                .stream()
-                .map(MovimientoStockMapper::toResponse)
-                .toList();
-
+    public List<MovimientoStockResponseDTO> listar() {
+        return movimientoStockService.listar();
     }
 
-    @PostMapping("/ajuste")
-    public void registrarAjuste(
-            @Valid @RequestBody MovimientoStockRequestDTO dto
-    ) {
+    @PostMapping
+    public ResponseEntity<MovimientoStockResponseDTO> registrarAjuste(
+            @Valid @RequestBody MovimientoStockRequestDTO dto){
 
-        stockService.registrarAjuste(dto);
-
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(stockService.registrarAjuste(dto));
     }
+
 }

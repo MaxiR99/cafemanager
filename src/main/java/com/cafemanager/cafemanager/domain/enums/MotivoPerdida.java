@@ -7,6 +7,7 @@ public enum MotivoPerdida {
     MAL_ESTADO,
     ERROR_PREPARACION,
     DERRAME,
+    MERMA,
     OTRO
 
 }

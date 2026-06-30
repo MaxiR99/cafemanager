@@ -23,14 +23,11 @@ public class RecetaController {
 
     @PostMapping
     public ResponseEntity<RecetaResponseDTO> crear(
-           @Valid @RequestBody RecetaRequestDTO dto
-    ) {
-
-        RecetaResponseDTO receta = recetaService.registrarReceta(dto);
+            @Valid @RequestBody RecetaRequestDTO dto) {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(receta);
+                .body(recetaService.registrarReceta(dto));
     }
 
 

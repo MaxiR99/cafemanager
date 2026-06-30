@@ -8,6 +8,7 @@ import com.cafemanager.cafemanager.domain.entity.Producto;
 import com.cafemanager.cafemanager.domain.repository.CategoriaRepository;
 import com.cafemanager.cafemanager.domain.repository.ProductoRepository;
 import com.cafemanager.cafemanager.exception.RecursoNoEncontradoException;
+import com.cafemanager.cafemanager.exception.ReglaNegocioException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +42,7 @@ public class ProductoService {
 
     public List<ProductoResponseDTO> listar(){
 
-        return productoRepository.findAll()
+        return productoRepository.findByActivoTrue()
                 .stream()
                 .map(ProductoMapper::toResponse)
                 .toList();
@@ -75,10 +76,17 @@ public class ProductoService {
 
     private Categoria obtenerCategoria(Long id){
 
-        return categoriaRepository.findById(id)
+        Categoria categoria = categoriaRepository.findById(id)
                 .orElseThrow(() ->
-                        new RecursoNoEncontradoException("Categoría no encontrada"));
+                        new RecursoNoEncontradoException(
+                                "Categoría no encontrada"));
 
+        if (!categoria.getActivo()) {
+            throw new ReglaNegocioException(
+                    "La categoría está inactiva");
+        }
+
+        return categoria;
     }
 
 }

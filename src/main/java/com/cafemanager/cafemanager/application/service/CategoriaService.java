@@ -26,7 +26,7 @@ public class CategoriaService {
     @Transactional
     public CategoriaResponseDTO guardar(CategoriaRequestDTO dto){
 
-        if (categoriaRepository.existsByNombreIgnoreCase(dto.getNombre())) {
+        if (categoriaRepository.existsByNombreIgnoreCaseAndActivoTrue(dto.getNombre())) {
             throw new RecursoDuplicadoException("La categoría ya existe");
         }
 
@@ -40,7 +40,7 @@ public class CategoriaService {
 
     public List<CategoriaResponseDTO> listar(){
 
-        return categoriaRepository.findAll()
+        return categoriaRepository.findByActivoTrue()
                 .stream()
                 .map(CategoriaMapper::toResponse)
                 .toList();

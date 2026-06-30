@@ -12,10 +12,10 @@ import java.util.List;
 @Setter
 public class RecetaRequestDTO {
 
-    @NotNull
+    @NotNull(message = "Debe seleccionar un producto")
     private Long productoId;
 
-    @NotEmpty
+    @NotEmpty(message = "La receta debe contener al menos un ingrediente")
     @Valid
     private List<DetalleRecetaRequestDTO> detalles;
 

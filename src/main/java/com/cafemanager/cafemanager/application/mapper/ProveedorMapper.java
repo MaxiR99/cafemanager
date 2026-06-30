@@ -17,7 +17,7 @@ public class ProveedorMapper {
         proveedor.setTelefono(dto.getTelefono());
         proveedor.setEmail(dto.getEmail());
         proveedor.setDireccion(dto.getDireccion());
-        proveedor.setActivo(true);
+
 
         return proveedor;
     }

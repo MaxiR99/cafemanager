@@ -1,8 +1,10 @@
 package com.cafemanager.cafemanager.application.service;
 
 import com.cafemanager.cafemanager.api.request.IngredienteRequestDTO;
+import com.cafemanager.cafemanager.api.response.CategoriaResponseDTO;
 import com.cafemanager.cafemanager.api.response.IngredienteResponseDTO;
 import com.cafemanager.cafemanager.api.response.IngredienteStockBajoResponseDTO;
+import com.cafemanager.cafemanager.application.mapper.CategoriaMapper;
 import com.cafemanager.cafemanager.application.mapper.IngredienteMapper;
 import com.cafemanager.cafemanager.domain.entity.Ingrediente;
 import com.cafemanager.cafemanager.domain.repository.IngredienteRepository;
@@ -22,11 +24,13 @@ public class IngredienteService {
 
     public List<IngredienteResponseDTO> listarTodos() {
 
-        return ingredienteRepository.findAll()
+        return ingredienteRepository.findByActivoTrue()
                 .stream()
                 .map(IngredienteMapper::toResponse)
                 .toList();
     }
+
+
 
     public IngredienteResponseDTO guardar(IngredienteRequestDTO dto) {
 
@@ -52,7 +56,7 @@ public class IngredienteService {
                 .orElseThrow(() ->
                         new RecursoNoEncontradoException("Ingrediente no encontrado"));
 
-        ingredienteRepository.delete(ingrediente);
+        ingrediente.setActivo(false);
     }
 
     public List<IngredienteStockBajoResponseDTO> listarStockBajo() {

@@ -1,17 +1,18 @@
 package com.cafemanager.cafemanager.application.service;
 
+import com.cafemanager.cafemanager.api.request.CompraRequestDTO;
+import com.cafemanager.cafemanager.api.request.DetalleCompraRequestDTO;
 import com.cafemanager.cafemanager.api.response.CompraDetalleResponseDTO;
+import com.cafemanager.cafemanager.api.response.CompraResumenResponseDTO;
 import com.cafemanager.cafemanager.application.mapper.CompraMapper;
 import com.cafemanager.cafemanager.domain.entity.*;
+import com.cafemanager.cafemanager.domain.enums.TipoMovimientoStock;
 import com.cafemanager.cafemanager.domain.repository.CompraRepository;
 import com.cafemanager.cafemanager.domain.repository.IngredienteRepository;
 import com.cafemanager.cafemanager.domain.repository.MovimientoStockRepository;
 import com.cafemanager.cafemanager.domain.repository.ProveedorRepository;
-import com.cafemanager.cafemanager.api.request.CompraRequestDTO;
-import com.cafemanager.cafemanager.api.response.CompraResumenResponseDTO;
-import com.cafemanager.cafemanager.api.request.DetalleCompraRequestDTO;
-import com.cafemanager.cafemanager.domain.enums.TipoMovimientoStock;
 import com.cafemanager.cafemanager.exception.RecursoNoEncontradoException;
+import com.cafemanager.cafemanager.exception.ReglaNegocioException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -27,20 +28,17 @@ public class CompraService {
     private final IngredienteRepository ingredienteRepository;
     private final MovimientoStockRepository movimientoStockRepository;
 
-
     public CompraService(
             CompraRepository compraRepository,
             ProveedorRepository proveedorRepository,
             IngredienteRepository ingredienteRepository,
-            MovimientoStockRepository movimientoStockRepository
-    ) {
+            MovimientoStockRepository movimientoStockRepository) {
+
         this.compraRepository = compraRepository;
         this.proveedorRepository = proveedorRepository;
         this.ingredienteRepository = ingredienteRepository;
         this.movimientoStockRepository = movimientoStockRepository;
     }
-
-
 
     public List<CompraResumenResponseDTO> listarTodas() {
 
@@ -48,61 +46,42 @@ public class CompraService {
                 .stream()
                 .map(CompraMapper::toResumenDTO)
                 .toList();
-
     }
 
-    public CompraDetalleResponseDTO buscarDetalle(Long id){
+    public CompraDetalleResponseDTO buscarDetalle(Long id) {
 
-        Compra compra = compraRepository.findById(id)
-                .orElseThrow(() ->
-                        new RecursoNoEncontradoException("Compra no encontrada"));
-
-        return CompraMapper.toDetalleDTO(compra);
-
+        return CompraMapper.toDetalleDTO(
+                obtenerCompra(id)
+        );
     }
-
 
     @Transactional
-    public Compra registrarCompra(CompraRequestDTO dto) {
+    public CompraDetalleResponseDTO registrarCompra(CompraRequestDTO dto) {
 
-
-        Proveedor proveedor = proveedorRepository.findById(dto.getProveedorId())
-                .orElseThrow(() -> new RecursoNoEncontradoException("Proveedor no encontrado"));
-
+        Proveedor proveedor = obtenerProveedor(dto.getProveedorId());
 
         Compra compra = new Compra();
-
         compra.setProveedor(proveedor);
         compra.setFecha(LocalDateTime.now());
         compra.setTotal(BigDecimal.ZERO);
 
-
         for (DetalleCompraRequestDTO detalleDTO : dto.getDetalles()) {
 
+            Ingrediente ingrediente =
+                    obtenerIngrediente(detalleDTO.getIngredienteId());
 
-            Ingrediente ingrediente = ingredienteRepository.findById(
-                    detalleDTO.getIngredienteId()
-            ).orElseThrow(() -> new RecursoNoEncontradoException("Ingrediente no encontrado"));
-
-
-            // Actualizamos stock
             ingrediente.setStockActual(
                     ingrediente.getStockActual()
                             .add(detalleDTO.getCantidad())
             );
 
-
             ingrediente.setCostoCompra(
                     detalleDTO.getPrecioUnitario()
             );
 
-
             ingredienteRepository.save(ingrediente);
 
-
-
             MovimientoStock movimiento = new MovimientoStock();
-
             movimiento.setIngrediente(ingrediente);
             movimiento.setTipoMovimiento(TipoMovimientoStock.COMPRA);
             movimiento.setCantidad(detalleDTO.getCantidad());
@@ -111,31 +90,59 @@ public class CompraService {
 
             movimientoStockRepository.save(movimiento);
 
-
-
             DetalleCompra detalle = new DetalleCompra();
-
             detalle.setCompra(compra);
             detalle.setIngrediente(ingrediente);
             detalle.setCantidad(detalleDTO.getCantidad());
             detalle.setPrecioUnitario(detalleDTO.getPrecioUnitario());
             detalle.setFechaVencimiento(detalleDTO.getFechaVencimiento());
 
-
             compra.getDetalles().add(detalle);
 
+            BigDecimal subtotal = detalleDTO.getCantidad()
+                    .multiply(detalleDTO.getPrecioUnitario());
 
             compra.setTotal(
-                    compra.getTotal()
-                            .add(
-                                    detalleDTO.getCantidad()
-                                            .multiply(detalleDTO.getPrecioUnitario())
-                            )
+                    compra.getTotal().add(subtotal)
             );
         }
 
+        Compra compraGuardada = compraRepository.save(compra);
 
-        return compraRepository.save(compra);
+        return CompraMapper.toDetalleDTO(compraGuardada);
+    }
+
+    private Compra obtenerCompra(Long id) {
+
+        return compraRepository.findById(id)
+                .orElseThrow(() ->
+                        new RecursoNoEncontradoException("Compra no encontrada"));
+    }
+
+    private Proveedor obtenerProveedor(Long id) {
+
+        Proveedor proveedor = proveedorRepository.findById(id)
+                .orElseThrow(() ->
+                        new RecursoNoEncontradoException("Proveedor no encontrado"));
+
+        if (!proveedor.getActivo()) {
+            throw new ReglaNegocioException("El proveedor está inactivo");
+        }
+
+        return proveedor;
+    }
+
+    private Ingrediente obtenerIngrediente(Long id) {
+
+        Ingrediente ingrediente = ingredienteRepository.findById(id)
+                .orElseThrow(() ->
+                        new RecursoNoEncontradoException("Ingrediente no encontrado"));
+
+        if (!ingrediente.getActivo()) {
+            throw new ReglaNegocioException("El ingrediente está inactivo");
+        }
+
+        return ingrediente;
     }
 
 }

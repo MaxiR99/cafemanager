@@ -7,12 +7,11 @@ import com.cafemanager.cafemanager.domain.entity.Categoria;
 public class CategoriaMapper {
 
 
-    public static Categoria toEntity(CategoriaRequestDTO dto) {
+    public static Categoria toEntity(CategoriaRequestDTO dto){
 
         Categoria categoria = new Categoria();
 
         categoria.setNombre(dto.getNombre());
-        categoria.setActivo(true);
 
         return categoria;
     }

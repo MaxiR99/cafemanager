@@ -5,6 +5,8 @@ import com.cafemanager.cafemanager.api.response.IngredienteResponseDTO;
 import com.cafemanager.cafemanager.api.response.IngredienteStockBajoResponseDTO;
 import com.cafemanager.cafemanager.application.service.IngredienteService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,11 +26,14 @@ public class IngredienteController {
         return ingredienteService.listarTodos();
     }
 
-    @PostMapping
-    public IngredienteResponseDTO crear(
-            @Valid @RequestBody IngredienteRequestDTO ingredienteDTO) {
 
-        return ingredienteService.guardar(ingredienteDTO);
+    @PostMapping
+    public ResponseEntity<IngredienteResponseDTO> crear(
+            @Valid @RequestBody IngredienteRequestDTO dto){
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(ingredienteService.guardar(dto));
     }
 
     @GetMapping("/{id}")

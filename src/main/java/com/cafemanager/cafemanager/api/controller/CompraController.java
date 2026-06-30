@@ -3,7 +3,6 @@ package com.cafemanager.cafemanager.api.controller;
 import com.cafemanager.cafemanager.api.request.CompraRequestDTO;
 import com.cafemanager.cafemanager.api.response.CompraDetalleResponseDTO;
 import com.cafemanager.cafemanager.api.response.CompraResumenResponseDTO;
-import com.cafemanager.cafemanager.domain.entity.Compra;
 import com.cafemanager.cafemanager.application.service.CompraService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -16,25 +15,19 @@ import java.util.List;
 @RequestMapping("/compras")
 public class CompraController {
 
-
     private final CompraService compraService;
-
 
     public CompraController(CompraService compraService) {
         this.compraService = compraService;
     }
 
-
     @PostMapping
-    public ResponseEntity<Compra> registrarCompra(
-           @Valid @RequestBody CompraRequestDTO compraDTO
-    ){
-
-        Compra compra = compraService.registrarCompra(compraDTO);
+    public ResponseEntity<CompraDetalleResponseDTO> registrarCompra(
+            @Valid @RequestBody CompraRequestDTO compraDTO) {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(compra);
+                .body(compraService.registrarCompra(compraDTO));
     }
 
     @GetMapping
@@ -44,11 +37,9 @@ public class CompraController {
 
     @GetMapping("/{id}")
     public CompraDetalleResponseDTO buscarDetalle(
-            @PathVariable Long id
-    ){
+            @PathVariable Long id) {
 
         return compraService.buscarDetalle(id);
-
     }
 
 }

@@ -70,18 +70,28 @@ public class RecetaService {
 
     private Producto obtenerProducto(Long id) {
 
-        return productoRepository.findById(id)
+        Producto producto = productoRepository.findById(id)
                 .orElseThrow(() ->
-                        new RecursoNoEncontradoException(
-                                "Producto no encontrado"));
+                        new RecursoNoEncontradoException("Producto no encontrado"));
+
+        if (!producto.getActivo()) {
+            throw new ReglaNegocioException("El producto está inactivo");
+        }
+
+        return producto;
     }
 
     private Ingrediente obtenerIngrediente(Long id) {
 
-        return ingredienteRepository.findById(id)
+        Ingrediente ingrediente = ingredienteRepository.findById(id)
                 .orElseThrow(() ->
-                        new RecursoNoEncontradoException(
-                                "Ingrediente no encontrado"));
+                        new RecursoNoEncontradoException("Ingrediente no encontrado"));
+
+        if (!ingrediente.getActivo()) {
+            throw new ReglaNegocioException("El ingrediente está inactivo");
+        }
+
+        return ingrediente;
     }
 
     public List<RecetaResponseDTO> listar() {
@@ -95,12 +105,17 @@ public class RecetaService {
 
     public RecetaResponseDTO buscarPorId(Long id) {
 
-        Receta receta = recetaRepository.findById(id)
+        return RecetaMapper.toResponse(
+                obtenerReceta(id)
+        );
+
+    }
+
+    private Receta obtenerReceta(Long id) {
+
+        return recetaRepository.findById(id)
                 .orElseThrow(() ->
                         new RecursoNoEncontradoException("Receta no encontrada"));
-
-        return RecetaMapper.toResponse(receta);
-
     }
 
 }

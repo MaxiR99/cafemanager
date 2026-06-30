@@ -25,10 +25,8 @@ public class VentaController {
     public ResponseEntity<VentaResponseDTO> registrar(
             @Valid @RequestBody VentaRequestDTO dto) {
 
-        VentaResponseDTO response = ventaService.registrarVenta(dto);
-
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(response);
+                .body(ventaService.registrarVenta(dto));
     }
 }

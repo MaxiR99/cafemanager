@@ -1,5 +1,7 @@
 package com.cafemanager.cafemanager.application.service;
 
+import com.cafemanager.cafemanager.api.response.MovimientoStockResponseDTO;
+import com.cafemanager.cafemanager.application.mapper.MovimientoStockMapper;
 import com.cafemanager.cafemanager.domain.entity.Ingrediente;
 import com.cafemanager.cafemanager.domain.entity.MovimientoStock;
 import com.cafemanager.cafemanager.domain.enums.TipoMovimientoStock;
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class MovimientoStockService {
@@ -15,12 +18,21 @@ public class MovimientoStockService {
     private final MovimientoStockRepository movimientoStockRepository;
 
     public MovimientoStockService(
-            MovimientoStockRepository movimientoStockRepository
-    ) {
+            MovimientoStockRepository movimientoStockRepository) {
+
         this.movimientoStockRepository = movimientoStockRepository;
     }
 
-    public void registrarMovimiento(
+    public List<MovimientoStockResponseDTO> listar() {
+
+        return movimientoStockRepository.findAll()
+                .stream()
+                .map(MovimientoStockMapper::toResponse)
+                .toList();
+
+    }
+
+    public MovimientoStockResponseDTO registrarMovimiento(
             Ingrediente ingrediente,
             TipoMovimientoStock tipoMovimiento,
             BigDecimal cantidad,
@@ -37,8 +49,10 @@ public class MovimientoStockService {
         movimiento.setObservacion(observacion);
         movimiento.setReferencia(referencia);
 
-        movimientoStockRepository.save(movimiento);
+        MovimientoStock guardado =
+                movimientoStockRepository.save(movimiento);
 
+        return MovimientoStockMapper.toResponse(guardado);
     }
 
 }

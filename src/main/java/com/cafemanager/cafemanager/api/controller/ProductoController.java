@@ -1,9 +1,12 @@
 package com.cafemanager.cafemanager.api.controller;
 
+
 import com.cafemanager.cafemanager.api.request.ProductoRequestDTO;
 import com.cafemanager.cafemanager.api.response.ProductoResponseDTO;
 import com.cafemanager.cafemanager.application.service.ProductoService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,13 +21,17 @@ public class ProductoController {
         this.productoService = productoService;
     }
 
+
+
     @PostMapping
-    public ProductoResponseDTO crear(
+    public ResponseEntity<ProductoResponseDTO> crear(
             @Valid @RequestBody ProductoRequestDTO dto){
 
-        return productoService.guardar(dto);
-
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(productoService.guardar(dto));
     }
+
 
     @GetMapping
     public List<ProductoResponseDTO> listar(){
