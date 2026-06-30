@@ -1,12 +1,16 @@
 package com.cafemanager.cafemanager.application.service;
 
+import com.cafemanager.cafemanager.api.request.MovimientoStockRequestDTO;
 import com.cafemanager.cafemanager.domain.entity.DetalleReceta;
 import com.cafemanager.cafemanager.domain.entity.Ingrediente;
 import com.cafemanager.cafemanager.domain.entity.Producto;
 import com.cafemanager.cafemanager.domain.entity.Receta;
+import com.cafemanager.cafemanager.domain.enums.TipoMovimientoStock;
+import com.cafemanager.cafemanager.domain.repository.IngredienteRepository;
 import com.cafemanager.cafemanager.domain.repository.RecetaRepository;
 import com.cafemanager.cafemanager.exception.RecursoNoEncontradoException;
 import com.cafemanager.cafemanager.exception.StockInsuficienteException;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -16,14 +20,17 @@ public class StockService {
 
     private final RecetaRepository recetaRepository;
     private final MovimientoStockService movimientoStockService;
+    private final IngredienteRepository ingredienteRepository;
 
 
     public StockService(
             RecetaRepository recetaRepository,
-            MovimientoStockService movimientoStockService
+            MovimientoStockService movimientoStockService,
+            IngredienteRepository ingredienteRepository
     ) {
         this.recetaRepository = recetaRepository;
         this.movimientoStockService = movimientoStockService;
+        this.ingredienteRepository = ingredienteRepository;
     }
 
 
@@ -75,11 +82,66 @@ public class StockService {
             );
 
 
-            movimientoStockService.registrarSalida(
+            movimientoStockService.registrarMovimiento(
                     ingrediente,
-                    cantidadNecesaria
+                    TipoMovimientoStock.VENTA,
+                    cantidadNecesaria,
+                    "Descuento automático por venta",
+                    "VENTA"
             );
         }
+    }
+
+
+
+    @Transactional
+    public void registrarAjuste(MovimientoStockRequestDTO dto) {
+
+        Ingrediente ingrediente = ingredienteRepository.findById(dto.getIngredienteId())
+                .orElseThrow(() ->
+                        new RecursoNoEncontradoException("Ingrediente no encontrado"));
+
+        switch (dto.getTipoMovimiento()) {
+
+            case AJUSTE -> ingrediente.setStockActual(
+                    ingrediente.getStockActual()
+                            .add(dto.getCantidad())
+            );
+
+            case PERDIDA -> {
+
+                validarStock(
+                        ingrediente,
+                        dto.getCantidad()
+                );
+
+                ingrediente.setStockActual(
+                        ingrediente.getStockActual()
+                                .subtract(dto.getCantidad())
+                );
+            }
+
+            default -> throw new IllegalArgumentException(
+                    "Tipo de movimiento no permitido"
+            );
+        }
+
+
+
+        ingredienteRepository.save(ingrediente);
+
+
+
+        movimientoStockService.registrarMovimiento(
+                ingrediente,
+                dto.getTipoMovimiento(),
+                dto.getCantidad(),
+                dto.getObservacion(),
+                "AJUSTE"
+        );
+
+
+
     }
 
 

@@ -47,6 +47,8 @@ public class GlobalExceptionHandler {
           Exception ex
   ) {
 
+
+
     ErrorResponse error = new ErrorResponse(
             LocalDateTime.now(),
             HttpStatus.INTERNAL_SERVER_ERROR.value(),

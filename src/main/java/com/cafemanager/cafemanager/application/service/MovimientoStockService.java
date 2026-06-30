@@ -9,13 +9,10 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-
 @Service
 public class MovimientoStockService {
 
-
     private final MovimientoStockRepository movimientoStockRepository;
-
 
     public MovimientoStockService(
             MovimientoStockRepository movimientoStockRepository
@@ -23,45 +20,25 @@ public class MovimientoStockService {
         this.movimientoStockRepository = movimientoStockRepository;
     }
 
-
-
-    public void registrarSalida(
+    public void registrarMovimiento(
             Ingrediente ingrediente,
-            BigDecimal cantidad
+            TipoMovimientoStock tipoMovimiento,
+            BigDecimal cantidad,
+            String observacion,
+            String referencia
     ) {
 
-
-        MovimientoStock movimiento =
-                new MovimientoStock();
-
+        MovimientoStock movimiento = new MovimientoStock();
 
         movimiento.setIngrediente(ingrediente);
-
-
-        movimiento.setTipoMovimiento(
-                TipoMovimientoStock.VENTA
-        );
-
-
+        movimiento.setTipoMovimiento(tipoMovimiento);
         movimiento.setCantidad(cantidad);
-
-
-        movimiento.setFecha(
-                LocalDateTime.now()
-        );
-
-
-        movimiento.setReferencia(
-                "VENTA"
-        );
-
-
-        movimiento.setObservacion(
-                "Descuento automático por venta"
-        );
-
+        movimiento.setFecha(LocalDateTime.now());
+        movimiento.setObservacion(observacion);
+        movimiento.setReferencia(referencia);
 
         movimientoStockRepository.save(movimiento);
+
     }
 
 }

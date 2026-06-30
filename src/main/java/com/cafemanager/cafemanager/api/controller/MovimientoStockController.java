@@ -1,9 +1,12 @@
 package com.cafemanager.cafemanager.api.controller;
 
+import com.cafemanager.cafemanager.api.request.MovimientoStockRequestDTO;
 import com.cafemanager.cafemanager.api.response.MovimientoStockResponseDTO;
 import com.cafemanager.cafemanager.application.mapper.MovimientoStockMapper;
+import com.cafemanager.cafemanager.application.service.StockService;
 import com.cafemanager.cafemanager.domain.entity.MovimientoStock;
 import com.cafemanager.cafemanager.domain.repository.MovimientoStockRepository;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,12 +17,15 @@ public class MovimientoStockController {
 
 
     private final MovimientoStockRepository movimientoStockRepository;
+    private final StockService stockService;
 
 
     public MovimientoStockController(
-            MovimientoStockRepository movimientoStockRepository
+            MovimientoStockRepository movimientoStockRepository,
+            StockService stockService
     ) {
         this.movimientoStockRepository = movimientoStockRepository;
+        this.stockService = stockService;
     }
 
 
@@ -30,6 +36,15 @@ public class MovimientoStockController {
                 .stream()
                 .map(MovimientoStockMapper::toResponse)
                 .toList();
+
+    }
+
+    @PostMapping("/ajuste")
+    public void registrarAjuste(
+            @Valid @RequestBody MovimientoStockRequestDTO dto
+    ) {
+
+        stockService.registrarAjuste(dto);
 
     }
 }
