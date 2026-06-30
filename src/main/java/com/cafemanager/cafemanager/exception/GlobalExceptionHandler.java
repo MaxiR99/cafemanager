@@ -58,4 +58,17 @@ public class GlobalExceptionHandler {
 
   }
 
+  @ExceptionHandler(RecursoDuplicadoException.class)
+  public ResponseEntity<ErrorResponse> manejarRecursoDuplicado(
+          RecursoDuplicadoException ex) {
+
+    ErrorResponse error = new ErrorResponse(
+            LocalDateTime.now(),
+            HttpStatus.CONFLICT.value(),
+            ex.getMessage()
+    );
+
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+  }
+
 }

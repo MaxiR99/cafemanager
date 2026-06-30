@@ -8,14 +8,13 @@ import java.math.BigDecimal;
 
 @Getter
 @AllArgsConstructor
-public class IngredienteResponseDTO {
+public class IngredienteStockBajoResponseDTO {
 
     private Long id;
     private String nombre;
     private BigDecimal stockActual;
     private BigDecimal stockMinimo;
-    private BigDecimal costoCompra;
+    private BigDecimal faltante;
     private UnidadMedida unidadMedida;
-    private boolean activo;
 
 }

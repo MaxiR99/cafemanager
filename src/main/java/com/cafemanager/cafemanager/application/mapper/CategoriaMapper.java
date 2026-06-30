@@ -1,9 +1,21 @@
 package com.cafemanager.cafemanager.application.mapper;
 
+import com.cafemanager.cafemanager.api.request.CategoriaRequestDTO;
 import com.cafemanager.cafemanager.api.response.CategoriaResponseDTO;
 import com.cafemanager.cafemanager.domain.entity.Categoria;
 
 public class CategoriaMapper {
+
+
+    public static Categoria toEntity(CategoriaRequestDTO dto) {
+
+        Categoria categoria = new Categoria();
+
+        categoria.setNombre(dto.getNombre());
+        categoria.setActivo(true);
+
+        return categoria;
+    }
 
     public static CategoriaResponseDTO toResponse(Categoria categoria){
 

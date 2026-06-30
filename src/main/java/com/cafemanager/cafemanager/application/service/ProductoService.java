@@ -32,18 +32,11 @@ public class ProductoService {
 
         Categoria categoria = obtenerCategoria(dto.getCategoriaId());
 
-        Producto producto = new Producto();
+        Producto producto = ProductoMapper.toEntity(dto, categoria);
 
-        producto.setNombre(dto.getNombre());
-        producto.setDescripcion(dto.getDescripcion());
-        producto.setPrecio(dto.getPrecio());
-        producto.setCategoria(categoria);
-        producto.setActivo(true);
-        producto.setDisponible(true);
+        Producto guardado = productoRepository.save(producto);
 
-        return ProductoMapper.toResponse(
-                productoRepository.save(producto)
-        );
+        return ProductoMapper.toResponse(guardado);
     }
 
     public List<ProductoResponseDTO> listar(){

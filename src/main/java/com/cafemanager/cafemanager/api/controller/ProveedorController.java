@@ -1,7 +1,9 @@
 package com.cafemanager.cafemanager.api.controller;
 
-import com.cafemanager.cafemanager.domain.entity.Proveedor;
+import com.cafemanager.cafemanager.api.request.ProveedorRequestDTO;
+import com.cafemanager.cafemanager.api.response.ProveedorResponseDTO;
 import com.cafemanager.cafemanager.application.service.ProveedorService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,29 +12,24 @@ import java.util.List;
 @RequestMapping("/proveedores")
 public class ProveedorController {
 
-
     private final ProveedorService proveedorService;
-
 
     public ProveedorController(ProveedorService proveedorService) {
         this.proveedorService = proveedorService;
     }
 
-
     @PostMapping
-    public Proveedor crear(@RequestBody Proveedor proveedor) {
-        return proveedorService.guardar(proveedor);
+    public ProveedorResponseDTO crear(@Valid @RequestBody ProveedorRequestDTO dto) {
+        return proveedorService.guardar(dto);
     }
 
-
     @GetMapping
-    public List<Proveedor> listar() {
+    public List<ProveedorResponseDTO> listar() {
         return proveedorService.listarTodos();
     }
 
-
     @GetMapping("/{id}")
-    public Proveedor buscar(@PathVariable Long id) {
+    public ProveedorResponseDTO buscar(@PathVariable Long id) {
         return proveedorService.buscarPorId(id);
     }
 

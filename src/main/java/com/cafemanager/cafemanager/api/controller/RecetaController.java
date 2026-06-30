@@ -4,6 +4,7 @@ import com.cafemanager.cafemanager.api.request.RecetaRequestDTO;
 import com.cafemanager.cafemanager.api.response.RecetaResponseDTO;
 import com.cafemanager.cafemanager.application.service.RecetaService;
 import com.cafemanager.cafemanager.domain.entity.Receta;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ public class RecetaController {
 
     @PostMapping
     public ResponseEntity<RecetaResponseDTO> crear(
-            @RequestBody RecetaRequestDTO dto
+           @Valid @RequestBody RecetaRequestDTO dto
     ) {
 
         RecetaResponseDTO receta = recetaService.registrarReceta(dto);

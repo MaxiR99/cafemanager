@@ -5,6 +5,7 @@ import com.cafemanager.cafemanager.api.response.CompraDetalleResponseDTO;
 import com.cafemanager.cafemanager.api.response.CompraResumenResponseDTO;
 import com.cafemanager.cafemanager.domain.entity.Compra;
 import com.cafemanager.cafemanager.application.service.CompraService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class CompraController {
 
     @PostMapping
     public ResponseEntity<Compra> registrarCompra(
-            @RequestBody CompraRequestDTO compraDTO
+           @Valid @RequestBody CompraRequestDTO compraDTO
     ){
 
         Compra compra = compraService.registrarCompra(compraDTO);

@@ -5,6 +5,7 @@ import com.cafemanager.cafemanager.api.response.CategoriaResponseDTO;
 import com.cafemanager.cafemanager.application.mapper.CategoriaMapper;
 import com.cafemanager.cafemanager.domain.entity.Categoria;
 import com.cafemanager.cafemanager.domain.repository.CategoriaRepository;
+import com.cafemanager.cafemanager.exception.RecursoDuplicadoException;
 import com.cafemanager.cafemanager.exception.RecursoNoEncontradoException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -20,16 +21,20 @@ public class CategoriaService {
         this.categoriaRepository = categoriaRepository;
     }
 
+
+
     @Transactional
     public CategoriaResponseDTO guardar(CategoriaRequestDTO dto){
 
-        Categoria categoria = new Categoria();
-        categoria.setNombre(dto.getNombre());
-        categoria.setActivo(true);
+        if (categoriaRepository.existsByNombreIgnoreCase(dto.getNombre())) {
+            throw new RecursoDuplicadoException("La categoría ya existe");
+        }
 
-        return CategoriaMapper.toResponse(
-                categoriaRepository.save(categoria)
-        );
+        Categoria categoria = CategoriaMapper.toEntity(dto);
+
+        Categoria guardada = categoriaRepository.save(categoria);
+
+        return CategoriaMapper.toResponse(guardada);
 
     }
 
