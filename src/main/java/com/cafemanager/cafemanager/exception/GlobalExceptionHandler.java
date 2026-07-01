@@ -2,6 +2,7 @@ package com.cafemanager.cafemanager.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -109,11 +110,26 @@ public class GlobalExceptionHandler {
   }
 
 
+  @ExceptionHandler(AuthorizationDeniedException.class)
+  public ResponseEntity<ErrorResponse> manejarAccesoDenegado(
+          AuthorizationDeniedException ex
+  ) {
+
+    ErrorResponse error = new ErrorResponse(
+            LocalDateTime.now(),
+            HttpStatus.FORBIDDEN.value(),
+            "Acceso denegado"
+    );
+
+    return ResponseEntity.status(HttpStatus.FORBIDDEN)
+            .body(error);
+  }
+
 
   @ExceptionHandler(Exception.class)
-  public ResponseEntity<ErrorResponse> manejarGeneral(
-          Exception ex
-  ) {
+  public ResponseEntity<ErrorResponse> manejarGeneral(Exception ex) {
+
+    ex.printStackTrace();
 
     ErrorResponse error = new ErrorResponse(
             LocalDateTime.now(),
@@ -121,8 +137,7 @@ public class GlobalExceptionHandler {
             "Error interno del servidor"
     );
 
-    return ResponseEntity
-            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(error);
   }
 
