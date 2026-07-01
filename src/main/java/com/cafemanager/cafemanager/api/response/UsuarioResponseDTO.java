@@ -1,6 +1,9 @@
 package com.cafemanager.cafemanager.api.response;
 
+import com.cafemanager.cafemanager.application.mapper.UsuarioMapper;
+import com.cafemanager.cafemanager.domain.entity.Usuario;
 import com.cafemanager.cafemanager.domain.enums.Rol;
+import com.cafemanager.cafemanager.exception.RecursoNoEncontradoException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -14,4 +17,10 @@ public class UsuarioResponseDTO {
     private Rol rol;
     private Boolean activo;
 
+
+
 }
+
+
+
+

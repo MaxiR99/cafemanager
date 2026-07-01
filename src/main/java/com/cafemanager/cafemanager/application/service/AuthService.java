@@ -6,6 +6,7 @@ import com.cafemanager.cafemanager.domain.entity.Usuario;
 import com.cafemanager.cafemanager.domain.repository.UsuarioRepository;
 import com.cafemanager.cafemanager.exception.ReglaNegocioException;
 import com.cafemanager.cafemanager.security.JwtService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,16 +14,17 @@ public class AuthService {
 
     private final UsuarioRepository usuarioRepository;
     private final JwtService jwtService;
-
+    private final PasswordEncoder passwordEncoder;
 
     public AuthService(
             UsuarioRepository usuarioRepository,
-            JwtService jwtService
+            JwtService jwtService,
+            PasswordEncoder passwordEncoder
     ) {
         this.usuarioRepository = usuarioRepository;
         this.jwtService = jwtService;
+        this.passwordEncoder = passwordEncoder;
     }
-
 
     public LoginResponseDTO autenticar(LoginRequestDTO dto) {
 
@@ -33,14 +35,14 @@ public class AuthService {
                         )
                 );
 
-
-        if (!usuario.getPassword().equals(dto.getPassword())) {
+        if (!passwordEncoder.matches(
+                dto.getPassword(),
+                usuario.getPassword())) {
 
             throw new ReglaNegocioException(
                     "Email o contraseña incorrectos"
             );
         }
-
 
         if (!usuario.getActivo()) {
 
@@ -49,9 +51,7 @@ public class AuthService {
             );
         }
 
-
         String token = jwtService.generateToken(usuario);
-
 
         return new LoginResponseDTO(token);
     }
