@@ -1,5 +1,6 @@
 package com.cafemanager.cafemanager.domain.repository;
 
+import com.cafemanager.cafemanager.api.response.IngredienteStockBajoResponseDTO;
 import com.cafemanager.cafemanager.domain.entity.Ingrediente;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -25,6 +26,21 @@ public interface IngredienteRepository extends JpaRepository<Ingrediente, Long> 
        AND i.activo = true
        """)
     List<Ingrediente> buscarStockBajo();
+
+    @Query("""
+        SELECT new com.cafemanager.cafemanager.api.response.IngredienteStockBajoResponseDTO(
+            i.id,
+            i.nombre,
+            i.stockActual,
+            i.stockMinimo,
+            (i.stockMinimo - i.stockActual),
+            i.unidadMedida
+        )
+        FROM Ingrediente i
+        WHERE i.stockActual <= i.stockMinimo
+        AND i.activo = true
+        """)
+    List<IngredienteStockBajoResponseDTO> listarIngredientesStockBajo();
 
 }
 
