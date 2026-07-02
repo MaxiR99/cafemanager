@@ -8,15 +8,15 @@ CafeManager permite administrar productos, ingredientes, stock, compras, ventas,
 
 # 🚀 Tecnologías
 
-- Java 17
+- Java 21
 - Spring Boot 3
 - Spring Data JPA
 - Hibernate ORM
 - Spring Security 6
 - JWT
 - BCrypt
-- MySQL 8
-- Swagger OpenAPI 3
+- PostgreSQL
+- Swagger OpenAPI 
 - Lombok
 
 ---
@@ -216,3 +216,61 @@ Estado:
 ✅ Gestión de usuarios con roles  
 ✅ Dashboard operativo  
 ✅ Documentación Swagger completa
+
+# ⚙️ Variables de entorno
+
+Para ejecutar el proyecto es necesario configurar las siguientes variables:
+
+| Variable | Descripción |
+|----------|-------------|
+| DB_URL | URL de conexión a PostgreSQL |
+| DB_USER | Usuario de la base de datos |
+| DB_PASSWORD | Contraseña de PostgreSQL |
+| JWT_SECRET | Clave utilizada para firmar los tokens JWT |
+| JWT_EXPIRATION | Tiempo de expiración del token (ms) |
+
+Ejemplo:
+
+```properties
+DB_URL=jdbc:postgresql://localhost:5432/cafemanager
+DB_USER=postgres
+DB_PASSWORD=tu_password
+JWT_SECRET=tu_clave_secreta
+JWT_EXPIRATION=86400000
+```
+
+# 🐳 Ejecutar con Docker
+
+Requisitos:
+
+- Docker Desktop instalado
+
+
+Clonar el proyecto:
+
+git clone https://github.com/MaxiR99/cafemanager.git
+
+
+Levantar la aplicación:
+
+docker compose up --build
+
+
+La API estará disponible en:
+
+http://localhost:8080
+
+
+Swagger:
+
+http://localhost:8080/swagger-ui/index.html
+
+# 👤 Usuario administrador de prueba
+
+Email:
+
+admin@cafemanager.com
+
+Password:
+
+Admin123
